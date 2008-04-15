@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>working.encryption</name>
-	<comment>Working example code of encryption.</comment>
+	<name>working.crypto</name>
+	<comment>Working example code of cryptography.</comment>
 	<projects>
 	</projects>
 	<buildSpec>
