@@ -1,4 +1,4 @@
-package org.example.code.crypto;
+package org.cujau.crypto;
 
 public class CryptoException extends Exception {
 

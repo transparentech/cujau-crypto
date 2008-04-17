@@ -1,14 +1,13 @@
-package org.example.code.crypto;
+package org.cujau.crypto;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-import org.example.code.crypto.AsymmetricCrypto;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;

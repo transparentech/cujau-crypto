@@ -1,4 +1,4 @@
-package org.example.code.crypto;
+package org.cujau.crypto;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -11,7 +11,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-import org.example.code.crypto.CryptoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

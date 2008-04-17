@@ -1,4 +1,4 @@
-package org.example.code.crypto;
+package org.cujau.crypto;
 
 import java.security.Provider;
 import java.security.Security;
