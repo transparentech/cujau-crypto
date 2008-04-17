@@ -111,7 +111,7 @@ public class AsymmetricCrypto {
             // RSAPublicKeySpec bobPubKeySpec = new RSAPublicKeySpec( encKey );
             // Load the public key from the byte array into a PublicKey object.
             X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec( encKey );
-            KeyFactory keyFactory = KeyFactory.getInstance( "RSA" );
+            KeyFactory keyFactory = KeyFactory.getInstance( ALGORITHM_NAME );
             pubKey = (RSAPublicKey) keyFactory.generatePublic( pubKeySpec );
         } catch ( NoSuchAlgorithmException e ) {
             LOG.error( "Problem loading public key.", e );
@@ -143,7 +143,7 @@ public class AsymmetricCrypto {
             // X509EncodedKeySpec spec = new X509EncodedKeySpec( encKey );
             // Load the private key from the byte array into a PrivateKey object.
             PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec( encKey );
-            KeyFactory keyFactory = KeyFactory.getInstance( "RSA" );
+            KeyFactory keyFactory = KeyFactory.getInstance( ALGORITHM_NAME );
             pubKey = (RSAPrivateKey) keyFactory.generatePrivate( privKeySpec );
         } catch ( NoSuchAlgorithmException e ) {
             LOG.error( "Problem loading private key.", e );
