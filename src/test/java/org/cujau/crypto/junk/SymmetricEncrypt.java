@@ -1,4 +1,4 @@
-package org.cujau.crypto;
+package org.cujau.crypto.junk;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;

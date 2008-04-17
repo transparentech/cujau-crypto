@@ -3,6 +3,7 @@ package org.cujau.crypto;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -10,6 +11,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +19,9 @@ import org.slf4j.LoggerFactory;
 public class SymmetricCrypto {
 
     private static final Logger LOG = LoggerFactory.getLogger( SymmetricCrypto.class );
-    private static final String ALGORITHM_NAME = "AES";
-    private static final int ALGORITHM_BITS = 128;
+    static final String ALGORITHM_NAME = "AES";
+    static final String CIPHER_ALGORITHM_NAME = "AES/CBC/PKCS5Padding";
+    static final int ALGORITHM_BITS = 128;
 
     private final KeyGenerator keyGen;
 
@@ -27,32 +30,56 @@ public class SymmetricCrypto {
     }
 
     /**
-     * Create a secret key that will be used during the symmetric encryption. The key will be an AES
-     * key of 128bits (16bytes).
+     * Create a random secret key that will be used during the symmetric encryption. The key will be
+     * an AES key of 128bits (16bytes).
      */
-    public SecretKey getAESSecret() {
+    public SecretKey getRandomKey() {
         SecretKey secretKey = keyGen.generateKey();
         return secretKey;
     }
 
-    public byte[] encrypt( byte[] data, SecretKey key ) throws CryptoException {
-        return crypt( data, key, Cipher.ENCRYPT_MODE );
+    /**
+     * Create a random IV that will be used during the symmetric encryption. The IV will contain 16
+     * random bytes.
+     * 
+     * @return A random IvParameterSpec
+     * @throws CryptoException
+     *             If the "SHA1PRNG" algorithm is not available.
+     */
+    public IvParameterSpec getRandomIV()
+            throws CryptoException {
+        SecureRandom sr;
+        try {
+            sr = SecureRandom.getInstance( "SHA1PRNG" );
+        } catch ( NoSuchAlgorithmException e ) {
+            throw new CryptoException( e );
+        }
+        byte[] iv = new byte[16];
+        sr.nextBytes( iv );
+        return new IvParameterSpec( iv );
     }
 
-    public byte[] decrypt( byte[] data, SecretKey key ) throws CryptoException {
-        return crypt( data, key, Cipher.DECRYPT_MODE );
+    public byte[] encrypt( byte[] data, SecretKey key, IvParameterSpec iv )
+            throws CryptoException {
+        return crypt( data, key, iv, Cipher.ENCRYPT_MODE );
     }
-    
-    private byte[] crypt( byte[] data, SecretKey key, int mode ) throws CryptoException {
+
+    public byte[] decrypt( byte[] data, SecretKey key, IvParameterSpec iv )
+            throws CryptoException {
+        return crypt( data, key, iv, Cipher.DECRYPT_MODE );
+    }
+
+    private byte[] crypt( byte[] data, SecretKey key, IvParameterSpec iv, int mode )
+            throws CryptoException {
         byte[] result = null;
-        
+
         try {
-            Cipher aesCipher = Cipher.getInstance( ALGORITHM_NAME );
+            Cipher aesCipher = Cipher.getInstance( CIPHER_ALGORITHM_NAME );
 
             /*
              * Step 3. Initialize the Cipher for Encryption
              */
-            aesCipher.init( mode, key, aesCipher.getParameters() );
+            aesCipher.init( mode, key, iv );
 
             /**
              * Step 4. Encrypt the Data 1. Declare / Initialize the Data. Here the data is of type
@@ -72,10 +99,10 @@ public class SymmetricCrypto {
         } catch ( BadPaddingException e ) {
             throw new CryptoException( e );
         }
-        
+
         return result;
     }
-    
+
     private static KeyGenerator loadKeyGenerator( String algo, int size ) {
         KeyGenerator gen = null;
         try {

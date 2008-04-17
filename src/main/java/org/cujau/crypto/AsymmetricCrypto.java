@@ -17,7 +17,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import org.cujau.crypto.TwoTest;
+import org.cujau.crypto.junk.TwoTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

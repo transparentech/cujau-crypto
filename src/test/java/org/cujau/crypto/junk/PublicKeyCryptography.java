@@ -1,4 +1,4 @@
-package org.cujau.crypto;
+package org.cujau.crypto.junk;
 
 import java.security.Key;
 import java.security.KeyStore;
