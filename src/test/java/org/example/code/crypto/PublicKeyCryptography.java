@@ -1,4 +1,4 @@
-package org.example.code.encryption;
+package org.example.code.crypto;
 
 import java.security.Key;
 import java.security.KeyStore;

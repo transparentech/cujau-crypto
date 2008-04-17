@@ -1,4 +1,4 @@
-package org.example.code.encryption;
+package org.example.code.crypto;
 
 public class CryptoException extends Exception {
 

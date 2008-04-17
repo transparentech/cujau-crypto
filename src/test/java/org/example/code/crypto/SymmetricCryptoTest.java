@@ -1,4 +1,4 @@
-package org.example.code.encryption;
+package org.example.code.crypto;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 
 import javax.crypto.SecretKey;
 
+import org.example.code.crypto.SymmetricCrypto;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;

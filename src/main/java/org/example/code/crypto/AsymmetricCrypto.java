@@ -1,4 +1,4 @@
-package org.example.code.encryption;
+package org.example.code.crypto;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +17,8 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import org.example.code.crypto.CryptoException;
+import org.example.code.crypto.TwoTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
