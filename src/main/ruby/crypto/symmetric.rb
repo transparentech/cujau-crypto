@@ -10,12 +10,12 @@ module Crypto
       @algorithm = algorithm
     end
 
-    def get_random_key()
+    def random_key()
       cipher = new_cipher( @algorithm )        
       cipher.random_key
     end
 
-    def get_random_iv()
+    def random_iv()
       cipher = new_cipher( @algorithm )
       cipher.random_iv
     end

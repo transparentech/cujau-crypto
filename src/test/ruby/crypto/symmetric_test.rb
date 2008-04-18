@@ -9,24 +9,24 @@ module Crypto
     end
     
     def test_random_key
-      key = @sim.get_random_key
+      key = @sim.random_key
       assert_not_nil( key )
       
       keyStr = Base64.encode64( key )
-      assert_not_equal( keyStr, Base64.encode64( @sim.get_random_key ) )
+      assert_not_equal( keyStr, Base64.encode64( @sim.random_key ) )
     end
     
     def test_random_iv
-      iv = @sim.get_random_iv
+      iv = @sim.random_iv
       assert_not_nil( iv )
 
       ivStr = Base64.encode64( iv )
-      assert_not_equal( ivStr, Base64.encode64( @sim.get_random_iv ) )
+      assert_not_equal( ivStr, Base64.encode64( @sim.random_iv ) )
     end
     
     def test_symmetric_encrypt_decrypt
-      key = @sim.get_random_key
-      iv = @sim.get_random_iv
+      key = @sim.random_key
+      iv = @sim.random_iv
       
       str = "abcdefghijklmnopqrstuvwxyz"
       assert_equal( 26, str.length )
@@ -40,8 +40,8 @@ module Crypto
     end
     
     def test_symmetric_encrypt
-      key = @sim.get_random_key
-      iv = @sim.get_random_iv
+      key = @sim.random_key
+      iv = @sim.random_iv
       
       str = "abcdefghijklmnopqrstuvwxyz"
       encStr = @sim.encrypt( str, key, iv )

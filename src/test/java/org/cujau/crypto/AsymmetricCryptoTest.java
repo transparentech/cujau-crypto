@@ -92,7 +92,6 @@ public class AsymmetricCryptoTest {
         String str = "abcdefghijklmnopqrstuvwxyz";
         byte[] strB = str.getBytes( "UTF-8" );
         assertTrue( strB.length == 26 );
-
         
         byte[] encStr = cry.encryptWithPrivateKey( strB );
         assertNotNull( encStr );
