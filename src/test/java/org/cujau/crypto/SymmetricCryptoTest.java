@@ -1,9 +1,10 @@
 package org.cujau.crypto;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import javax.crypto.SecretKey;
@@ -11,6 +12,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.cujau.utils.Base64;
+import org.cujau.utils.ResourceUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -120,5 +122,26 @@ public class SymmetricCryptoTest {
         strB = cry.decrypt( encStr, key, iv );
         str = new String( strB, "UTF-8" );
         assertTrue( origStr.equals( str ) );
+    }
+    
+    @Test
+    public void testBigEncryptDecrypt()
+            throws IOException, CryptoException {
+        String bigStr = ResourceUtil.getResourceAsString( "/testBigText.txt" );
+        assertNotNull( bigStr );
+
+        SecretKey key = cry.getRandomKey();
+        assertNotNull( key );
+        IvParameterSpec iv = cry.getRandomIV();
+        assertNotNull( iv );
+
+        byte[] strB = bigStr.getBytes( "UTF-8" );
+        byte[] encStr = cry.encrypt( strB, key, iv );
+        assertNotNull( encStr );
+        byte[] deStr = cry.decrypt( encStr, key, iv );
+        assertNotNull( deStr );
+
+        String str2 = new String( deStr, "UTF-8" );
+        assertTrue( bigStr.equals( str2 ) );
     }
 }

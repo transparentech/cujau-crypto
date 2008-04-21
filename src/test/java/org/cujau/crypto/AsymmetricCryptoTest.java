@@ -4,11 +4,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
 import org.cujau.utils.Base64;
+import org.cujau.utils.ResourceUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -162,10 +164,26 @@ public class AsymmetricCryptoTest {
         byte[] encStr = cry.decryptWithPrivateKey( Base64.decode( strEnc ) );
         String strNew = new String( encStr, "UTF-8" );
         assertTrue( str.equals( strNew ) );
-        
-        strEnc = "VA0AZe+dnKGpKWogySE/2lLTybc0hefEr+6WjVWWyTexDhM9xcWzffA7HvuJ\niKZzLbhtRkXu7x7vn2BpNc/FFeCMD0BpBzh6LRiKGgs3jdXtqcvoSMteFDQO\nJ6z3t7rpkuoJcjbHQTffXh0uXKYHzDUWX7uxkeL/z+y5tg49KnrDZhIWWwr1\n1emgIRla4/+43DUmwKNEzwBtlMMVASNU79tikLFKLwuSYsWCKonWWxkEWHbs\ngdDnww7oXQjt1+WajT2dI/cpkY6l0uVOMhLqX9NXKrhLM7KNL6qBAlgM3Erw\nfMd7xNvnXbO6JXvCAmA40nenycd5kSAvSuN9BUmffg==";
+
+        strEnc =
+            "VA0AZe+dnKGpKWogySE/2lLTybc0hefEr+6WjVWWyTexDhM9xcWzffA7HvuJ\niKZzLbhtRkXu7x7vn2BpNc/FFeCMD0BpBzh6LRiKGgs3jdXtqcvoSMteFDQO\nJ6z3t7rpkuoJcjbHQTffXh0uXKYHzDUWX7uxkeL/z+y5tg49KnrDZhIWWwr1\n1emgIRla4/+43DUmwKNEzwBtlMMVASNU79tikLFKLwuSYsWCKonWWxkEWHbs\ngdDnww7oXQjt1+WajT2dI/cpkY6l0uVOMhLqX9NXKrhLM7KNL6qBAlgM3Erw\nfMd7xNvnXbO6JXvCAmA40nenycd5kSAvSuN9BUmffg==";
         encStr = cry.decryptWithPublicKey( Base64.decode( strEnc ) );
         strNew = new String( encStr, "UTF-8" );
         assertTrue( str.equals( strNew ) );
+    }
+
+    @Test
+    public void testBigEncryptDecrypt()
+            throws IOException {
+        String bigStr = ResourceUtil.getResourceAsString( "/testBigText.txt" );
+        assertNotNull( bigStr );
+
+        byte[] encStr = null;
+        try {
+            encStr = cry.encryptWithPublicKey( bigStr.getBytes( "UTF-8" ) );
+        } catch ( CryptoException e ) {
+            assertTrue( true );
+        }
+        assertNull( encStr );
     }
 }
