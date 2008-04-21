@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+    <here>Some more text.</here>
+    <here>And some more.</here>
+    <there>Where did you go.</there>
+    <destination id="Bonn">
+        <country>Germany</country>
+        <city>Bonn</city>
+    </destination>
+</mail>

@@ -25,7 +25,7 @@ public class SymmetricCryptoTest {
     private SymmetricCrypto cry;
 
     @Before
-    public void before() {
+    public void before() throws CryptoException {
         cry = new SymmetricCrypto();
     }
 

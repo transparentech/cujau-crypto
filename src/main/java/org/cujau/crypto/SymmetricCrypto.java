@@ -12,6 +12,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,16 @@ public class SymmetricCrypto {
     static final int ALGORITHM_BITS = 128;
 
     private final KeyGenerator keyGen;
+    private final SecureRandom secureRandom;
 
-    public SymmetricCrypto() {
+    public SymmetricCrypto() throws CryptoException {
         keyGen = loadKeyGenerator( ALGORITHM_NAME, ALGORITHM_BITS );
+        
+        try {
+            secureRandom = SecureRandom.getInstance( "SHA1PRNG" );
+        } catch ( NoSuchAlgorithmException e ) {
+            throw new CryptoException( e );
+        }
     }
 
     /**
@@ -38,6 +46,10 @@ public class SymmetricCrypto {
         return secretKey;
     }
 
+    public SecretKey getKeyFromBytes( byte[] key ) {
+        return new SecretKeySpec( key, ALGORITHM_NAME );
+    }
+
     /**
      * Create a random IV that will be used during the symmetric encryption. The IV will contain 16
      * random bytes.
@@ -46,16 +58,13 @@ public class SymmetricCrypto {
      * @throws CryptoException
      *             If the "SHA1PRNG" algorithm is not available.
      */
-    public IvParameterSpec getRandomIV()
-            throws CryptoException {
-        SecureRandom sr;
-        try {
-            sr = SecureRandom.getInstance( "SHA1PRNG" );
-        } catch ( NoSuchAlgorithmException e ) {
-            throw new CryptoException( e );
-        }
+    public IvParameterSpec getRandomIV() {
         byte[] iv = new byte[16];
-        sr.nextBytes( iv );
+        secureRandom.nextBytes( iv );
+        return new IvParameterSpec( iv );
+    }
+
+    public IvParameterSpec getIvFromBytes( byte[] iv ) {
         return new IvParameterSpec( iv );
     }
 
