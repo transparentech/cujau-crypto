@@ -56,6 +56,14 @@ public class CryptoTest {
         
     }
     
+    @Test
+    public void testHybridEncrypt() throws UnsupportedEncodingException, CryptoException {
+        String resStr = "abcdefghijklmnopqrstuvwxyz";
+        byte[] data = resStr.getBytes( "UTF-8" );
+        byte[] encData = crypto.encrypt( data );
+        LOG.debug( "encData.length={}", encData.length );
+    }
+    
     private void doOneTest( String resStr ) throws UnsupportedEncodingException, CryptoException {
         byte[] data = resStr.getBytes( "UTF-8" );
         byte[] encData = crypto.encrypt( data );
