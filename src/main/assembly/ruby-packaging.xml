@@ -1,0 +1,30 @@
+<assembly>
+    <id>ruby</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    
+    <!-- 
+        Name the base directory after the artifactId (rather than the
+        full package name with groupId and version). 
+    -->
+    <baseDirectory>${artifactId}-${version}-ruby</baseDirectory>
+
+    <!-- Bring in the common assembly elements. 
+    <componentDescriptors>
+      <componentDescriptor>src/main/assembly/common-assemble-components.xml</componentDescriptor>
+    </componentDescriptors>
+-->
+
+    <fileSets>
+      <fileSet>
+        <directory>${basedir}/src/main/ruby</directory>
+        <outputDirectory>src</outputDirectory>
+      </fileSet>
+      <fileSet>
+        <directory>${basedir}/src/test/ruby</directory>
+        <outputDirectory>test</outputDirectory>
+      </fileSet>
+    </fileSets>
+
+</assembly>

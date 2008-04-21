@@ -16,12 +16,16 @@ import org.slf4j.LoggerFactory;
 
 public class AsymmetricCryptoTest {
     private static final Logger LOG = LoggerFactory.getLogger( AsymmetricCryptoTest.class );
+    private static final String PUBLIC_KEY_RESOURCE = "/public.der";
+    private static final String PRIVATE_KEY_RESOURCE = "/private.der";
 
     private AsymmetricCrypto cry;
 
     @Before
     public void before() {
         cry = new AsymmetricCrypto();
+        cry.setPublicKey( PUBLIC_KEY_RESOURCE );
+        cry.setPrivateKey( PRIVATE_KEY_RESOURCE );
     }
 
     @Test

@@ -48,7 +48,7 @@ public class TwoTest implements Serializable {
         keyfis.read( encKey );
         keyfis.close();
         
-        LOG.debug( new String( encKey ) );
+//        LOG.debug( new String( encKey ) );
 //        PKCS8EncodedKeySpec bobPubKeySpec = new PKCS8EncodedKeySpec( encKey );
 //        RSAPublicKeySpec bobPubKeySpec = new RSAPublicKeySpec( encKey );
       X509EncodedKeySpec bobPubKeySpec = new X509EncodedKeySpec( encKey );
@@ -63,7 +63,7 @@ public class TwoTest implements Serializable {
         keyfis.read( encKey );
         keyfis.close();
         
-        LOG.debug( new String( encKey ) );
+//        LOG.debug( new String( encKey ) );
 //        KeySpec spec = new PKCS8EncodedKeySpec( encKey );
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec( encKey );
 //        RSAPublicKeySpec bobPubKeySpec = new RSAPublicKeySpec( encKey );
@@ -134,10 +134,10 @@ public class TwoTest implements Serializable {
             // done reading...
         }
 
-        System.out.println( "Contents of decrypted file:" );
-        for ( String s : decryptedStrings ) {
-            System.out.println( s );
-        }
+//        System.out.println( "Contents of decrypted file:" );
+//        for ( String s : decryptedStrings ) {
+//            System.out.println( s );
+//        }
     }
 
     public static SecretKey getDesKey()
