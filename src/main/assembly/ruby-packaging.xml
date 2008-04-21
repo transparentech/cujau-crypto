@@ -10,12 +10,6 @@
     -->
     <baseDirectory>${artifactId}-${version}-ruby</baseDirectory>
 
-    <!-- Bring in the common assembly elements. 
-    <componentDescriptors>
-      <componentDescriptor>src/main/assembly/common-assemble-components.xml</componentDescriptor>
-    </componentDescriptors>
--->
-
     <fileSets>
       <fileSet>
         <directory>${basedir}/src/main/ruby</directory>

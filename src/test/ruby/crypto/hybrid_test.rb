@@ -5,7 +5,7 @@ require 'crypto/hybrid'
 module Crypto
   class HybridTest < Test::Unit::TestCase
     def setup
-      privkey = File.read( ENV['CUJAU_CRYPTO_HOME'] + '/src/main/resources/private.pem' )
+      privkey = File.read( ENV['CUJAU_CRYPTO_HOME'] + '/src/test/resources/private.pem' )
       privpass = 'iloveyou'
       asim = Crypto::Asymmetric.new( :private_key => privkey, :private_key_password => privpass )
       @sim = Crypto::Hybrid.new( asim )
