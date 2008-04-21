@@ -121,6 +121,28 @@ module Crypto
     end
 
     def test_asymmetric_decrypt
+      str = "abcdefghijklmnopqrstuvwxyz"
+
+      strEnc = 'Uhv8A1L99UZp8tCgTxiVQY2rbI40quNnYRT+1p4xOtdGutqFbamcS0U8X7la61yMIMwkDXz3uWjm
+m/rn/tUV1Q7CLcN/3ys6yEb3HoHlnn+QsAtiBtOwz4jaPs17PRfp45o9f8FOUevd4zojQ0bZ+K7T
+yJHqrq0kj+SzDes5slh7xM+WTXMFowobSdZ+e/iwabHPgMZ6da28NIr7/BybaUyW9LZL3ppfygFx
+iHuPwGISXncZBc/CGVT/hKrsDo3PKu+wK8gGR6QZOgjoQ9rYVL6VBTSzDPc61RxrUeVjn90+t81e
+4OD7WIDQQzDJzuy/RPyx7WCbyM1jkru8U2LVlA=='
+      strNew = @asim.decrypt_with_private_key( Base64.decode64( strEnc ))
+      assert_equal( str, strNew )
+
+      strEnc = 'WEkon/O7JvwctJ7hgcGRvZ/qL4yk7kofCMI++JBf6GDsUBnAtcwAzcgEj0BIRkVizVemxFtXEh3FIZmAr2TbTFsEvV0d5Wza/T8AiBWEusRu/x27Ak1fXGSzDbKdIclidbu2jFM48S56L9hkD9D7GVR9gAMOv2PcqBUBThUWuw+yDkG+ernUzEpLGGgAADU6b4GtHmmQ851bSFVVVqeG3HI1psbuM0loovJqW/PI+uYe37xikQp+RoThQmP0X2GNRZHIrcf1ZvjiWM9h0dAgE1HpMhDewF4NehfYKvqTdqmQOvCFFs+g547E51bFvVWJzwZylhZdCt19DiU23nqdKA=='
+      strNew = @asim.decrypt_with_private_key( Base64.decode64( strEnc ))
+      assert_equal( str, strNew )
+      
+      
+      strEnc = 'VA0AZe+dnKGpKWogySE/2lLTybc0hefEr+6WjVWWyTexDhM9xcWzffA7HvuJiKZzLbhtRkXu7x7v
+n2BpNc/FFeCMD0BpBzh6LRiKGgs3jdXtqcvoSMteFDQOJ6z3t7rpkuoJcjbHQTffXh0uXKYHzDUW
+X7uxkeL/z+y5tg49KnrDZhIWWwr11emgIRla4/+43DUmwKNEzwBtlMMVASNU79tikLFKLwuSYsWC
+KonWWxkEWHbsgdDnww7oXQjt1+WajT2dI/cpkY6l0uVOMhLqX9NXKrhLM7KNL6qBAlgM3ErwfMd7
+xNvnXbO6JXvCAmA40nenycd5kSAvSuN9BUmffg=='
+      strNew = @asim.decrypt_with_public_key( Base64.decode64( strEnc ))
+      assert_equal( str, strNew )
     end
   end
 end
