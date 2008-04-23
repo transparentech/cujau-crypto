@@ -1,11 +1,12 @@
 require 'rubygems'
 Gem::manage_gems
 require 'rake/gempackagetask'
+require 'rake/testtask'
 require 'fileutils'
 
 spec = Gem::Specification.new do |s| 
   s.name = "cujau.crypto"
-  s.version = "0.0.1"
+  s.version = "0.1.0"
   s.author = "TransparenTech LLC"
   s.email = "nick@transparentech.com"
   s.homepage = "http://www.transparentech.com/"
@@ -49,4 +50,10 @@ task :default do
   
   # Copy the GEM file into the toplevel target dir.
   cp_r 'pkg/.', '..'
+end
+
+Rake::TestTask.new do |t|
+  t.libs << "src/test/ruby" << "src/main/ruby"
+  t.test_files = FileList["src/test/ruby/test_suite.rb"]
+  t.verbose = true
 end
