@@ -3,15 +3,25 @@ require 'digest/sha1'
 
 module Crypto
   class Asymmetric
+    attr_reader :key_size_bytes
+    
     def initialize( options={ } )
       opts = { 
         :private_key_password => nil, 
         :public_key => nil, 
         :private_key => nil 
       }.merge( options )
-      self.private_key= opts[:private_key], opts[:private_key_password]
-      self.public_key= opts[:public_key]
-      self.public_key= @private_key if @public_key.nil?
+      self.private_key = opts[:private_key], opts[:private_key_password]
+      self.public_key = opts[:public_key]
+      self.public_key = @private_key if @public_key.nil?
+      # Do an encryption to determine and cache the length of any encrypted data.
+      if @public_key
+        @key_size_bytes = @public_key.public_encrypt( "x" ).length
+      elsif @private_key
+        @key_size_bytes = @private_key.private_encrypt( "x" ).length
+      else
+        @key_size_bytes = 0
+      end
     end
     
     def public_key()

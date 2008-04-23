@@ -2,12 +2,13 @@ package org.cujau.crypto;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -24,61 +25,65 @@ public class AsymmetricCrypto {
 
     private static final Logger LOG = LoggerFactory.getLogger( AsymmetricCrypto.class );
 
-    private static final String ALGORITHM_NAME = "RSA";
-
-    private RSAPublicKey publicKey;
-    private RSAPrivateKey privateKey;
-
-    public RSAPublicKey getPublicKey() {
-        return publicKey;
-    }
+    private final PublicKey publicKey;
+    private final PrivateKey privateKey;
+    private final int keySizeBytes;
+    private final String algorithmName;
 
     /**
-     * Set the public key used during encryption or decryption.
+     * Create a new AssymmetricCrypto instance.
      * 
-     * @param resourceName
+     * @param algorithm
+     *            The name of the algorithm use to create the keys. Examples are 'RSA' and 'DSA'.
+     * @param privateKeyResourceName
+     *            The name of a resource on the classpath containing the private key. <strong>Must</strong>
+     *            be in the DER format.
+     * @param publicKeyResourceName
      *            The name of a resource on the classpath containing the public key. <strong>Must</strong>
      *            be in the DER format.
      */
-    public void setPublicKey( String resourceName ) {
-        publicKey = loadPublicKey( resourceName );
+    public AsymmetricCrypto( String algorithm, String privateKeyResourceName, String publicKeyResourceName ) {
+        algorithmName = algorithm;
+        publicKey = loadPublicKey( algorithmName, publicKeyResourceName );
+        privateKey = loadPrivateKey( algorithmName, privateKeyResourceName );
+        keySizeBytes = calculateKeySizeInBytes();
     }
 
     /**
-     * Set the public key used during encryption or decryption.
+     * Create a new AssymmetricCrypto instance.
      * 
-     * @param keyStream
+     * @param algorithm
+     *            The name of the algorithm use to create the keys. Examples are 'RSA' and 'DSA'.
+     * @param privateKeyStream
+     *            The input stream containing the private key. <strong>Must</strong> be in the DER
+     *            format.
+     * @param publicKeyStream
      *            The input stream containing the public key. <strong>Must</strong> be in the DER
      *            format.
      */
-    public void setPublicKey( InputStream keyStream ) {
-        publicKey = loadPublicKey( keyStream );
+    public AsymmetricCrypto( String algorithm, InputStream privateKeyStream, InputStream publicKeyStream ) {
+        algorithmName = algorithm;
+        publicKey = loadPublicKey( algorithm, publicKeyStream );
+        privateKey = loadPrivateKey( algorithm, privateKeyStream );
+        keySizeBytes = calculateKeySizeInBytes();
     }
-    
-    public RSAPrivateKey getPrivateKey() {
+
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public PrivateKey getPrivateKey() {
         return privateKey;
     }
 
     /**
-     * Set the private key used during encryption or decryption.
+     * Get the size of the keys in bytes. This value is also the length of any data encrypted with
+     * the keys.
      * 
-     * @param resourceName
-     *            The name of a resource on the classpath containing the private key. <strong>Must</strong>
-     *            be in the DER format.
+     * @return The size in bytes of the keys.
      */
-    public void setPrivateKey( String resourceName ) {
-        privateKey = loadPrivateKey( resourceName );
-    }
-
-    /**
-     * Set the private key used during encryption or decryption.
-     * 
-     * @param keyStream
-     *            The input stream containing the private key. <strong>Must</strong> be in the DER
-     *            format.
-     */
-    public void setPrivateKey( InputStream keyStream ) {
-        privateKey = loadPrivateKey( keyStream );
+    public int getKeySizeBytes() {
+        return keySizeBytes;
     }
 
     public byte[] encryptWithPublicKey( byte[] data )
@@ -106,7 +111,7 @@ public class AsymmetricCrypto {
         byte[] result = null;
 
         try {
-            Cipher aesCipher = Cipher.getInstance( ALGORITHM_NAME );
+            Cipher aesCipher = Cipher.getInstance( algorithmName );
             // Initialize the Cipher for the required mode.
             aesCipher.init( mode, key );
             // Do the encryption/decryption.
@@ -126,18 +131,24 @@ public class AsymmetricCrypto {
         return result;
     }
 
-    private static RSAPublicKey loadPublicKey( String resourceName ) {
+    private static PublicKey loadPublicKey( String algorithmName, String resourceName ) {
+        if ( resourceName == null ) {
+            return null;
+        }
         // Get the resource containing the public key.
         InputStream keyStream = AsymmetricCrypto.class.getResourceAsStream( resourceName );
         if ( keyStream == null ) {
             LOG.info( "Public key is missing." );
             return null;
         }
-        return loadPublicKey( keyStream );
+        return loadPublicKey( algorithmName, keyStream );
     }
 
-    private static RSAPublicKey loadPublicKey( InputStream keyStream ) {
-        RSAPublicKey pubKey = null;
+    private static PublicKey loadPublicKey( String algorithmName, InputStream keyStream ) {
+        if ( keyStream == null ) {
+            return null;
+        }
+        PublicKey pubKey = null;
         try {
             // Load the public key into the byte array.
             byte[] encKey = new byte[keyStream.available()];
@@ -146,8 +157,8 @@ public class AsymmetricCrypto {
 
             // Load the public key from the byte array into a PublicKey object.
             X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec( encKey );
-            KeyFactory keyFactory = KeyFactory.getInstance( ALGORITHM_NAME );
-            pubKey = (RSAPublicKey) keyFactory.generatePublic( pubKeySpec );
+            KeyFactory keyFactory = KeyFactory.getInstance( algorithmName );
+            pubKey = (PublicKey) keyFactory.generatePublic( pubKeySpec );
         } catch ( NoSuchAlgorithmException e ) {
             LOG.error( "Problem loading public key.", e );
         } catch ( InvalidKeySpecException e ) {
@@ -159,18 +170,24 @@ public class AsymmetricCrypto {
         return pubKey;
     }
 
-    private static RSAPrivateKey loadPrivateKey( String resourceName ) {
+    private static PrivateKey loadPrivateKey( String algorithmName, String resourceName ) {
+        if ( resourceName == null ) {
+            return null;
+        }
         // Get the resource containing the private key
         InputStream keyStream = AsymmetricCrypto.class.getResourceAsStream( resourceName );
         if ( keyStream == null ) {
             LOG.info( "Private key resource not available." );
             return null;
         }
-        return loadPrivateKey( keyStream );
+        return loadPrivateKey( algorithmName, keyStream );
     }
 
-    private static RSAPrivateKey loadPrivateKey( InputStream keyStream ) {
-        RSAPrivateKey pubKey = null;
+    private static PrivateKey loadPrivateKey( String algorithmName, InputStream keyStream ) {
+        if ( keyStream == null ) {
+            return null;
+        }
+        PrivateKey pubKey = null;
         try {
             // Load the private key into the byte array.
             byte[] encKey = new byte[keyStream.available()];
@@ -179,8 +196,8 @@ public class AsymmetricCrypto {
 
             // Load the private key from the byte array into a PrivateKey object.
             PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec( encKey );
-            KeyFactory keyFactory = KeyFactory.getInstance( ALGORITHM_NAME );
-            pubKey = (RSAPrivateKey) keyFactory.generatePrivate( privKeySpec );
+            KeyFactory keyFactory = KeyFactory.getInstance( algorithmName );
+            pubKey = (PrivateKey) keyFactory.generatePrivate( privKeySpec );
         } catch ( NoSuchAlgorithmException e ) {
             LOG.error( "Problem loading private key.", e );
         } catch ( InvalidKeySpecException e ) {
@@ -191,4 +208,19 @@ public class AsymmetricCrypto {
         return pubKey;
     }
 
+    private int calculateKeySizeInBytes() {
+        try {
+            if ( publicKey != null ) {
+                return crypt( "x".getBytes( "UTF-8" ), publicKey, Cipher.ENCRYPT_MODE ).length;
+            } else if ( privateKey != null ) {
+                return crypt( "x".getBytes( "UTF-8" ), privateKey, Cipher.ENCRYPT_MODE ).length;
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            // Ignore as this should never happen.
+        } catch ( CryptoException e ) {
+            // This probably won't happen.
+            LOG.warn( "Problem encrypting 'x' to get key size in bytes!", e );
+        }
+        return 0;
+    }
 }

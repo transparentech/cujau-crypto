@@ -48,9 +48,9 @@ public class HybridCrypto {
 
     public byte[] decryptWithPublicKey( byte[] encBundle )
             throws CryptoException {
-        byte[] encKey = new byte[256];
-        byte[] encIv = new byte[256];
-        byte[] encData = new byte[encBundle.length - 512];
+        byte[] encKey = new byte[asymmetric.getKeySizeBytes()];
+        byte[] encIv = new byte[asymmetric.getKeySizeBytes()];
+        byte[] encData = new byte[encBundle.length - asymmetric.getKeySizeBytes() * 2];
 
         unbundle( encBundle, encData, encKey, encIv );
         SecretKey key = symmetric.getKeyFromBytes( asymmetric.decryptWithPublicKey( encKey ) );
@@ -61,9 +61,9 @@ public class HybridCrypto {
 
     public byte[] decryptWithPrivateKey( byte[] encBundle )
             throws CryptoException {
-        byte[] encKey = new byte[256];
-        byte[] encIv = new byte[256];
-        byte[] encData = new byte[encBundle.length - 512];
+        byte[] encKey = new byte[asymmetric.getKeySizeBytes()];
+        byte[] encIv = new byte[asymmetric.getKeySizeBytes()];
+        byte[] encData = new byte[encBundle.length - asymmetric.getKeySizeBytes() * 2];
 
         unbundle( encBundle, encData, encKey, encIv );
         SecretKey key = symmetric.getKeyFromBytes( asymmetric.decryptWithPrivateKey( encKey ) );
@@ -73,9 +73,9 @@ public class HybridCrypto {
     }
 
     private void unbundle( byte[] encBundle, byte[] encData, byte[] encKey, byte[] encIv ) {
-        System.arraycopy( encBundle, 0, encIv, 0, 256 );
-        System.arraycopy( encBundle, 256, encKey, 0, 256 );
-        System.arraycopy( encBundle, 512, encData, 0, encData.length );
+        System.arraycopy( encBundle, 0, encIv, 0, asymmetric.getKeySizeBytes() );
+        System.arraycopy( encBundle, asymmetric.getKeySizeBytes(), encKey, 0, asymmetric.getKeySizeBytes() );
+        System.arraycopy( encBundle, asymmetric.getKeySizeBytes() * 2, encData, 0, encData.length );
     }
 
     private byte[] bundle( byte[] encData, byte[] encKey, byte[] encIv ) {

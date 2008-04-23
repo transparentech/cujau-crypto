@@ -19,7 +19,8 @@ module Crypto
       assert_not_nil( @asim.public_key )
       assert( @asim.public_key.public? )
       assert_nil( @asim.private_key )
-
+      assert_equal( 256, @asim.key_size_bytes )
+      
       @asim = Crypto::Asymmetric.new( :private_key => privkey, :private_key_password => privpass )
       assert_not_nil( @asim.private_key )
       assert( @asim.private_key.private? )

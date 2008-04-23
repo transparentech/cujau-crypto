@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 import org.cujau.utils.Base64;
 import org.cujau.utils.ResourceUtil;
@@ -20,19 +20,18 @@ public class AsymmetricCryptoTest {
     private static final Logger LOG = LoggerFactory.getLogger( AsymmetricCryptoTest.class );
     private static final String PUBLIC_KEY_RESOURCE = "/public.der";
     private static final String PRIVATE_KEY_RESOURCE = "/private.der";
-
+    private static final String ALGORITHM_FOR_KEYS = "RSA";
+    
     private AsymmetricCrypto cry;
 
     @Before
     public void before() {
-        cry = new AsymmetricCrypto();
-        cry.setPublicKey( PUBLIC_KEY_RESOURCE );
-        cry.setPrivateKey( PRIVATE_KEY_RESOURCE );
+        cry = new AsymmetricCrypto( ALGORITHM_FOR_KEYS, PRIVATE_KEY_RESOURCE, PUBLIC_KEY_RESOURCE );
     }
 
     @Test
     public void testPublicKey() {
-        RSAPublicKey key = cry.getPublicKey();
+        PublicKey key = cry.getPublicKey();
         assertNotNull( key );
 
         LOG.debug( "public key={}", key.toString() );
@@ -46,7 +45,7 @@ public class AsymmetricCryptoTest {
 
     @Test
     public void testPrivateKey() {
-        RSAPrivateKey key = cry.getPrivateKey();
+        PrivateKey key = cry.getPrivateKey();
         assertNotNull( key );
 
         LOG.debug( "private key={}", key.toString() );

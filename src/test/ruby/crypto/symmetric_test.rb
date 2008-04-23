@@ -19,7 +19,7 @@ module Crypto
     def test_random_iv
       iv = @sim.random_iv
       assert_not_nil( iv )
-
+      
       ivStr = Base64.encode64( iv )
       assert_not_equal( ivStr, Base64.encode64( @sim.random_iv ) )
     end
