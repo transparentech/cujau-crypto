@@ -73,6 +73,16 @@ CvUgxZmp+LHxNdg7aonL8sUXXfDJ9KTabqqwMFXLwA=="
       assert_equal( str, str2 )
     end
     
+    def test_license_encrypt
+      licStr = %q{ 
+com.sme.license.owner=Nicholas Rahn
+com.sme.license.expirationDate=2010-01-01 00:00:00
+com.sme.license.type=GOLD
+}
+      encStr = @sim.encrypt_with_private_key( licStr )
+      puts "license='#{Base64.encode64( encStr )}'"
+    end
+    
     private
     
     def do_one_test( str )

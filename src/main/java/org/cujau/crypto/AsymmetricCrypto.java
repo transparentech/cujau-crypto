@@ -37,10 +37,10 @@ public class AsymmetricCrypto {
      *            The name of the algorithm use to create the keys. Examples are 'RSA' and 'DSA'.
      * @param privateKeyResourceName
      *            The name of a resource on the classpath containing the private key. <strong>Must</strong>
-     *            be in the DER format.
+     *            be in the DER format. Can be <tt>null</tt>.
      * @param publicKeyResourceName
      *            The name of a resource on the classpath containing the public key. <strong>Must</strong>
-     *            be in the DER format.
+     *            be in the DER format. Can be <tt>null</tt>.
      */
     public AsymmetricCrypto( String algorithm, String privateKeyResourceName, String publicKeyResourceName ) {
         algorithmName = algorithm;
@@ -56,10 +56,10 @@ public class AsymmetricCrypto {
      *            The name of the algorithm use to create the keys. Examples are 'RSA' and 'DSA'.
      * @param privateKeyStream
      *            The input stream containing the private key. <strong>Must</strong> be in the DER
-     *            format.
+     *            format. Can be <tt>null</tt>.
      * @param publicKeyStream
      *            The input stream containing the public key. <strong>Must</strong> be in the DER
-     *            format.
+     *            format. Can be <tt>null</tt>.
      */
     public AsymmetricCrypto( String algorithm, InputStream privateKeyStream, InputStream publicKeyStream ) {
         algorithmName = algorithm;
