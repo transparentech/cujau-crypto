@@ -57,3 +57,83 @@ Rake::TestTask.new do |t|
   t.test_files = FileList["src/test/ruby/test_suite.rb"]
   t.verbose = true
 end
+
+task :genkeys, :alias, :password, :outdir  do |t, args|
+  keyalias = 'cujau'
+  keyalias = args[:alias] if args[:alias]
+  password = 'changeit'
+  password = args[:password] if args[:password]
+  outdir = '/tmp'
+  outdir = args[:outdir] if args[:outdir]
+  
+  keyalg = 'RSA'
+  keysize = 2048
+  validity = 999
+  storetype = 'jks'
+  keystore = "#{outdir}/#{keyalias}KeyStore.#{storetype}"
+  pubcert = "#{outdir}/#{keyalias}-pub.cert"
+  certstore = "#{outdir}/#{keyalias}CertStore.#{storetype}"
+  privkey = "#{outdir}/#{keyalias}-priv.key"
+  pubkey = "#{outdir}/#{keyalias}-pub.key"
+  
+  # Generate private/public key pair in keystore.jks
+  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  puts "GENERATING PRIVATE/PUBLIC KEY PAIR IN KEYSTORE (#{keystore})"
+  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  cmd = "keytool -genkeypair -alias #{keyalias} -keyalg RSA -keysize #{keysize} -validity #{validity} -keystore #{keystore} -storetype #{storetype} -keypass #{password} -storepass #{password}"
+  puts cmd
+  system cmd
+  
+  # Export public certificate into cujau.cer
+  puts "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  puts "EXPORTING PUBLIC CERTIFICATE INTO #{pubcert}"
+  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  cmd = "keytool -export -keystore #{keystore} -alias #{keyalias} -file #{pubcert} -storepass #{password}"
+  puts cmd
+  system cmd
+  
+  # Import public certificate into cujauCert.jks certificate store.
+  puts "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  puts "IMPORTING PUBLIC CERTIFICATE INTO CERTIFICATE STORE (#{certstore})"
+  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  cmd = "keytool -import -alias #{keyalias} -file #{pubcert} -storetype #{storetype} -keystore #{certstore} -storepass #{password}; rm -f #{pubcert}"
+  puts cmd
+  system cmd
+  
+  # Export the private key into pkcs8 unencrypted format suitable for the ruby side.
+  puts "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  puts "EXPORTING PRIVATE KEY INTO PKCS8 FORMAT (#{privkey})"
+  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  cmd = "java -cp target/cujau.crypto-0.1.0-SNAPSHOT.jar org.cujau.crypto.ExportPrivateKey #{keystore} #{storetype} #{password} #{keyalias} #{privkey}"
+  puts cmd
+  system cmd
+  
+  # Export the public key into format suitable for the ruby side.
+  puts "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  puts "EXPORTING PUBLIC KEY INTO #{pubkey}"
+  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  cmd = "openssl rsa -in #{privkey} -out #{pubkey} -outform PEM -pubout"
+  puts cmd
+  system cmd
+
+  puts "\n"
+  puts "Key generation completed!"
+  puts "Java-side files:"
+  puts "  Key Store:         #{keystore}"
+  puts "  Certificate Store: #{certstore}"
+  puts "Ruby-side files:"
+  puts "  Private Key:       #{privkey}"
+  puts "  Public Key:        #{pubkey}"
+  puts "\n"
+  
+  # Convert the pkcs8 formatted private key to a non binary one that can be read by apache modssl.
+  #
+  #openssl pkcs8 -inform PEM -nocrypt -in #{privkey} -out #{privkey}.ssl
+
+  # Convert the pkcs8 unencrypted private key to an encrypted pkcs8
+  # key. You will be asked for password to use for encryption. This
+  # can also be used on the ruby side (with the password, of course).
+  #
+  #openssl pkcs8 -inform PEM -in #{privkey} -outform PEM -out #{privkey}.pem -topk8
+  
+end
