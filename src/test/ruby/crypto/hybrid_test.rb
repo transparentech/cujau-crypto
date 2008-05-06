@@ -3,10 +3,16 @@ require 'base64'
 require 'crypto/hybrid'
 
 module Crypto
+  
+  PRIVATE_KEY_RESOURCE = '/cujau-priv.key'
+  PRIVATE_KEY_PASSWORD = 'iloveyou'
+  PUBLIC_KEY_RESOURCE = '/cujau-pub.key'
+
   class HybridTest < Test::Unit::TestCase
     def setup
-      privkey = File.read( ENV['CUJAU_CRYPTO_HOME'] + '/src/test/resources/private.pem' )
-      privpass = 'iloveyou'
+      privkey = File.read( ENV['CUJAU_CRYPTO_HOME'] + '/src/test/resources' + PRIVATE_KEY_RESOURCE )
+      privpass = PRIVATE_KEY_PASSWORD
+
       asim = Crypto::Asymmetric.new( :private_key => privkey, :private_key_password => privpass )
       @sim = Crypto::Hybrid.new( asim )
     end
@@ -37,38 +43,38 @@ module Crypto
       str = "abcdefghijklmnopqrstuvwxyz"
       
       encStr = @sim.encrypt_with_public_key( str )
-      puts "encStr='#{Base64.encode64( encStr )}'"
+      puts "HYB:pubEnc='#{Base64.encode64( encStr )}'"
 
       encStr = @sim.encrypt_with_private_key( str )
-      puts "encStr='#{Base64.encode64( encStr )}'"
+      puts "HYB:privEnc='#{Base64.encode64( encStr )}'"
     end
     
     def test_decrypt
       str = "abcdefghijklmnopqrstuvwxyz"
 
-      strEnc = "S4fFQ8bKrvQddTY966/OOB26rNKH9X0f4Qnx9lIytrcrRTFHNm6DWAiwoqkAUX2vZCVt2Xc8MA6B
-v/NhWwAWMgQSaQ3LAPpP/RqRxQDpXG2tX42LF09pmXDQe+4Fl3Ii8uD/QP3QRVgli/Ajomi0K1zO
-oOG8Q6Q9nRzJRU28SNT7O9m8TkJPI440tpfrKk7Zfw8bioUZExTdeXJZF6DUtw+9yUM9re9vbkcR
-IcwznuDl/D4Achiv4aUJcSYNf68jFBd4EgwycDNz/cZI/XM+Dl2DlU2ZCkEaJtTbkBopdmaco2zn
-bjO7Igu5/Se9ALnwCeTRmwTarelAFLoZUrXitkxGcCO+7amVzdnIhMVs+HnrxSlU4Vt/FSW+sU6E
-S9WR95vZ9qP1mu7zCw9W0hIzBBKHm/3CtFt+TwDDbZ39xhLshg3dfq59pmn6AjazsK1RX3y9I9Nn
-NWVJkVjlLfYbgBCvsoTMAE/Wql7wMFTKv0wGLdAB/mRrcBFHMTI88CvymKJ1jLm6QRu5WVmmMPg9
-uLSAeYUYnLoEiNDUWS2EKWmNPanaQbgS/uq+3RnNmM/DUHspXKa0DQbWM6Tpmx1w5IN7UXyPBs6Z
-cGCUFRlM4wlix4tvVbCBs59UZe6knmcHPQKh8lHOBPbTUW2rTxaeWzZontEG8ExICCl9O8iJ7U23
-utdYjA0X6/BK/lX4kNZR/+1sBpq7y21eRMpQ8TFvVA=="
+      strEnc = 'J6cSRl7grbhSBAKq8pIGaw6ZwFUylRlfyQVp6tZtNbjU40YdWzlVng+Hvwq0Usg3SAzyoFz08+y5
+0Fb/23vlr1VPHZZfCuqRNLxbhXB8+LbwJoPMYb4CuiUUaR4uUKyZZwxZ94IKUHBO19FhEX1HaYv/
+mL8mGof0DCbpv3RP+Zgzjb/aCDVoFEZKjtI+VITSPBrHFJ1qpqdylg8A7ApTVQneDtjxFfGikC7C
+WKBtr7FSzj/1p3FJXvv5Mvbsyo2vQMYMnz7tr+TcH9c8tOC7wbXZh+UrivJ7NWHbE8UUI36IVj+E
+Kr4clOWobq5KIffn53ZujUp6Bf/Z2rHvClxZgmH50D5nnakhpFXwENefC0woIFTJQ8tTb1Yvh4zd
+zbHJ30z7IqJCQ+R+1QyhQJfyrHzI+elB0hZdcXdKcxnrv8OXGowaaOvB/sjuQcoLhKgtnUi2r973
+GKBEP1exVgtZAvVrJu642xpNH4Ha8Zs4mldqau9D+v7Ho7wTcCJoR6cu48DDcDbgokFhiwFdlblA
+Zo+f3uaiat14tRhzwvNEy9jMf7oOYsnWzEzWrgKiLba8IGdXIRrrwRX89QL1KLre0pxuSW05+Yvt
+lRnOZOlLGcCJHj/z2n+htTaLgJ8FxUIo8lK9G69eY7E/d9NvJqDQuCmGFMt3uIHrNBIONY46Asl8
+M/b62GZ1gNyo/GQ28i3NxB30SeAoQE77eu63wkvnTQ=='
       str2 = @sim.decrypt_with_public_key( Base64.decode64( strEnc ) )
       assert_equal( str, str2 )
       
-      strEnc = "B4G+IMj+I5gh/5V5mkwIQ+mE1yG1HPI5YNy7gv1DZjplF++JJL/fXt3egTAnxnkfyBKg/DrQtTjV
-vs6wbI08aq256qCjTIwvbOT5hG9x6QSLTNnf/BF1fT6eB71VCWU5BA0IDb5uH6qyzF2Qo9+K6R/o
-Sx8MNurRLN/0c83xPKqjL4re4IzsVWTfUxnACECIVrber7mXZAd7daBauU28bEWRT51mmbN1Gpla
-cGH9JZyOnJGOHr5TVwvHnJUCHZAzlJbpby3UJPLqTPFIs8HevGe3y9uebCeTNMmwsRzu7C4ACFdr
-RwvvtHHEBx24qFgSIf3JxkKJ/1oDIcSG/ePvIzW6mPbN2SGBIBV4md/ftWMumgxWqbqiZz/vbrUA
-04JdM7FcIOOPAj+/A9TwxOQrZ3DFfrCfDjVHApk/Y4bX0T9DAbzqVwUuo9VGJIvRSQtysXwRZFvA
-ZVas0P1H4z9c5kgZeRhVAuXN93Se1rE60+68iynNyt7OaVV2qeCA4YtCNmsTTBGb0/34BE7ufKbd
-MRz7jPYSFxG5n3UFK+bhn3F13yAJwp0TlY+SD0s1ktzF3vlJwQnAl6EQ6rLPD0wbUXDv0QnFspPQ
-+O3kOB6K68ltrF+9g1vUVLJEfnK/iOcvBaHFPmJn9YwGmVsNsKjIVNRISctJfyYA4gSJ5QIapblc
-CvUgxZmp+LHxNdg7aonL8sUXXfDJ9KTabqqwMFXLwA=="
+      strEnc = 'jczswveXfulamElqSBv/n82eII/eG0kW/a0aqZOtcG/if7E7r0Zz19U3xYJvrD4Z8+GwFEXvr+7S
+DyJ4Ml7dmVPIdNW8Ng789bEbiF3XrBy3D1BaVUNzLXbu+C9/qJkBQ9A6fVEmzT7SUgbbQuYVpVAk
+nZXjdBG5fQsQL/mI0o1pBvCysvqKNuaT0/zPCwP5aqzYurxgWOI9cFyYPZ0e6o0fwF71Dezo085V
+MKV9w6JOVDwCvMWY0XeZTvLogkt7olq9W2VA9v+jcEiyRZqtsR5ZNbdBbMrfFcSSoLr0hUT6lHma
+hem3qqufw2dTJxBKRxKt4K3HiRw2bPDg+req7X+6iKrD44ITzwQYI03KG69NCH8+s4niuABOC+tK
+NtFOESxa/TekLNkXRRzAhqi3W6mwTJdnvegjvZetF7o7vwQxvIKxkIUymLDt84C3Hq/WTchw0WiD
+4unT3QNg3q3hYGXGBO+HNExOd7SqFYp1a7sau+1eKhXtesesGY7uoD9+HWPfXY1B+KRTQLozr9Hl
+zfFwq4AoYmsFCObKxXfXAkiAiZk2WLo6S2AmS/b9Ix9SUTfWf2asbRWJq1WFpowx9yjIYl1xo0Zg
+usPd9bIri6MbL/MTuUnEw4yCE0rX2Zj2rdoMURYBqYhi4VS16JIntymTAxsIC/FL3AdVRpN+PSvK
+jgEdR8+yjmAFE3AbIg1cfjhF+QJTYUOTsqAG77JyRA=='
       str2 = @sim.decrypt_with_private_key( Base64.decode64( strEnc ) )
       assert_equal( str, str2 )
     end

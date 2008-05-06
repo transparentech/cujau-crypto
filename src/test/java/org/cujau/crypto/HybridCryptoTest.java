@@ -3,7 +3,10 @@ package org.cujau.crypto;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 import org.cujau.utils.Base64;
 import org.cujau.utils.ResourceUtil;
@@ -16,17 +19,31 @@ public class HybridCryptoTest {
 
     private static final Logger LOG = LoggerFactory.getLogger( HybridCryptoTest.class );
 
-    private static final String PUBLIC_KEY_RESOURCE = "/public.der";
-    private static final String PRIVATE_KEY_RESOURCE = "/private.der";
-    private static final String ALGORITHM_FOR_KEYS = "RSA";
+    private static final String CERTSTORE_RESOURCE = "/cujauCertStore.jks";
+    private static final String CERTSTORE_PASSWORD = "changeit";
+    private static final String CERTSTORE_ALIAS = "cujau";
+
+    private static final String KEYSTORE_RESOURCE = "/cujauKeyStore.jks";
+    private static final String KEYSTORE_PASSWORD = "changeit";
+    private static final String KEYSTORE_ALIAS = "cujau";
+    private static final String KEYSTORE_ALIAS_PASSWORD = "changeit";
 
     private HybridCrypto hybrid;
 
     @Before
     public void before() {
-        // System.setProperty( "java.security.egd", "file:/dev/urandom" );
-        AsymmetricCrypto asymmetric =
-            new AsymmetricCrypto( ALGORITHM_FOR_KEYS, PRIVATE_KEY_RESOURCE, PUBLIC_KEY_RESOURCE );
+        AsymmetricCrypto asymmetric = new AsymmetricCrypto();
+
+        InputStream certStream = getClass().getResourceAsStream( CERTSTORE_RESOURCE );
+        PublicKey pub = AsymmetricCrypto.loadPublicKey( certStream, CERTSTORE_PASSWORD, CERTSTORE_ALIAS );
+        asymmetric.setPublicKey( pub );
+
+        InputStream keyStream = getClass().getResourceAsStream( KEYSTORE_RESOURCE );
+        PrivateKey priv =
+            AsymmetricCrypto.loadPrivateKey( keyStream, KEYSTORE_PASSWORD, KEYSTORE_ALIAS,
+                                             KEYSTORE_ALIAS_PASSWORD );
+        asymmetric.setPrivateKey( priv );
+
         hybrid = new HybridCrypto( asymmetric );
     }
 
@@ -73,15 +90,11 @@ public class HybridCryptoTest {
     public void testHybridDecrypt()
             throws UnsupportedEncodingException, CryptoException {
         String str = "abcdefghijklmnopqrstuvwxyz";
-        String resStr =
-            "gIdA7QOpdCpG3QkmJmmyWbtsFK1ncZxXiN3yIjSjo80sIfO54lWrIuVt5XMW\nwWx24/oHt/Kc7voQdt+s/jZq9sM4Sye8+m4LWSX07c1yroR++TECKC5QObkO\nu3420EUGLJanjtWJN8E9kJ9Fes+9XGjGxSHmT4XhMGMe9a+1qK36LcR/oZw1\nn3RBf6ShVs4juCq8tfzono8QZC7dq6oM5wY6s7ezm46MoH3F4Gg9j1e4oiuC\nf+n2q9Nlo+A92LNQwLz+i3BFt34eIqyrqLFEL+iwqmabK86DL4iEvAxXw7xP\nd8DidFvHIahG63llYxSyGmtoJAagzG5e0HzQTD9gqJgiR812VGKlXRPBCQSJ\nAiXUCYIJ2fsKK3gCCxGnmAOEsYmXsLZSOk7prpfb+MOqMI59gMgR2iUJO0jg\nDVyEgXE5f/ASegZwU5tGLthNQDWshAnzyVC/T/A4wb83ZbH5EURBpx3gvRca\n+k0GrIJSpC4rYeOPEuhGOE91vqlBp02QiLosg4E3dqGVyah3A5nUP5DspRo+\nJIZp33/WiI48U3iElzup/fKkD3PG7pN1m0zP4Dkql8+axOsNK5wzJjoc+EFJ\nkElYoqdFRqJVhneCO1K016xepJX/Y9iih+N8ic+aAKnR4GHP3hfP7t+Ii/MB\nDDWVWCDUuk2ZjvM23GPIlamoqUUQ+/eUXQ4qJX0kjbMz+z8fPTYyiK8cP3jC\nQHTDyA==";
-        assertTrue( str
-                       .equals( new String( hybrid.decryptWithPrivateKey( Base64.decode( resStr ) ), "UTF-8" ) ) );
+        String resStr = "ELTVwF4H23HqVctgJZs00TOIqSFqPtETtQY9JueLIgUzgurccTQaBFRnK4VP\nOGKum5zLknYqHqpVUxQu4p2tVH7FcGGHfGqXRUtHWo92PsQKbeG7EBSqkj+p\nnBZeM/OotqiiZEVj9nsRQk2bYSjxHRvP9EC1zvtoGmNam9NU3ev+JymNg6Fv\ntkMIvvjc2Chl5oMxDgb7iHbS9T55PX8oh2GABMYVcgl1ayRnNYqnks4ox/te\nVn+WqOL/RyI7P0PdbwF/b+EU4xLLKrxoz/gImdIpKEcJP5q66t3OlsGoFQGZ\nwsLrY2SMUJqjS/Tk3LeiiUsLDGtF9ALq4sUA80hsVyev1qVwFGyt0HPBsAKM\n9cl41cXR3mtPCNZWCbkVTKETVYObW6Sc4GTicE0/LBV0SyT3E96dtSCZ6buY\n2wbLGC03vXZHXuEu9PLB+aYe01sJMryKH2rp71C0AJhjbpdVdQT6I37ROS5c\neH+ShAPupqJlGLQEOzUbiQq7l9N0hP8OhzMFm7CZ1zrPgULzXDAq9cKWyg6g\nZVLnxnQrT19q9N/lBkxuIt1reO91pa6oYqPBpaH1V9zrojpou+vzeFSd5Rqb\ncILoEQTxcmWChNbiUbERAeV1QT/QIK5TWSXZ+6R1nR18Y+lSjdFIgn66x3n8\n3ENVDUUqvQ+fIHiYGkHykHVmSNGOcvNn5xdU2YgiW0qV3PB5VIHzHVv00Fx3\nXgJM4A==";
+        assertTrue( str.equals( new String( hybrid.decryptWithPrivateKey( Base64.decode( resStr ) ), "UTF-8" ) ) );
 
-        resStr =
-            "BuwojihmSKfwGv8amXDzdDuEof/S56Oh106RSdv55nqkdzzFIpw+AMzWiEUZ\nh9hkJFV3l2ZioBvGGCahXXFZgcu+/7eYACRB+MWw2d4C7pH9lzmfBY/rgCGP\nshTRb50mJulF1UMK20TVNfQo0sdkdFGVCrT/OIlJFaUYdVC9L6m8o5BmbgGL\n+jIGU44k5llTqc3ml9dCGe7pOvkBHsG4RaAr3AeWgmtXqyMtg1osfgPZHLyt\nbFRn3uEugeBw9vlUvk18EeH2YMRhtj4NhhLTYQTTkGGQiWJa+llpUZQiA3Tb\nChRgIvaed1xLYyiTxwXlk23+ts+0Z1MQ28/YUMmPZhNrlBFgukhBItekOB6w\nVaIpI4bQbX4UKxdnguJjbxrTyBzwakTWlZR12oyD8R/i8dOTWBUgwSrqE47X\nTJUAocKLg8MLopGyLWy+C1p41xgDHHG7HQorqtaA3/7jLcyDLpiaLEJhxX7/\nvD0EFg8IqtA0IX3dhKdE5tiSOxQCx6zFiFQ16Yvs98qyB7shJhODAlI0ADgz\nnDhmamjOWZ/qMTMc0R82TzeHJ/TeTk5Gb1arX7vAuSIeV+++BKCjyBl1yRbV\nzl90X0R5Oojd2D1plbtl641sRmF7khHBPkl5ek/jnHvK4cDwZzDQmgv0PRmN\nb2ZY4ik/yTkuyoL4JpRWujj+/pNKiFz4aYzhN0dKI7egO+l1GpWTWZgT/kNL\nkyeueg==";
-        assertTrue( str
-                       .equals( new String( hybrid.decryptWithPublicKey( Base64.decode( resStr ) ), "UTF-8" ) ) );
+        resStr = "V847XajP3IWARf6Q8lPPC/y9+NyJH7GUOu9/T/8mmtRcM4sWLehrEkiHx+tk\nlkmUrIQOfpCsAx2iLJvOuJA8ArPqPx+P/21rvuW47H8Q7FlHK3CfiIhUiKD7\n6HUwfQawSUxtSUSEW9kgpssDgS0rsdlSREjhefe8FtRvWVrRh8H92flChOCx\ndfrdrjqug7diZShrTOdkdpavVFi+yefh0FWA9I+aUf3I0LxGEAmeITylGghI\niSHWAUGNQ9sA6It5CIO+bRcoK4bGjaCjTKpmKSZ3KlDCBF2eEEV1X3vX03x0\nLe0u+1HXPko77TAa72rbl126Cc2GelCWWAxWR4liCjhMSy8nX/pKRDs9tNfv\n9ygBENkFkGXDw+Hb2HkcQN4+iDW9+55wPOTvyMZkNWMDDI11CooDnynicinx\nM4Cn+yx8H5ND5jO5gEj79OrtO/L+LU3Di1iGZhprvAyrSqVwyaQY1t9+BH79\n0sPHi165JQldg4JUWOK7dfpzOo6mtHinlbssRIHqcw1M26eo7Z35C8KxY5yz\nDgwufaF9Wywlwt6enZwDVt3Jb0A8Fqmh99eWHHZZJ5lwn2w+xFOFDn00xfJl\n/RcoSwtekFomCOysAyKadAVJr2B34Xj1ISCR/JvZl5erjdGBbpFC63Cgk6FH\nFjeJ1dITHilaakNLmtRrl9QXcy13WkMTI+Xv8JzdqQsX3np3r4zgJsvJNCvt\nFXuoBA==";
+        assertTrue( str.equals( new String( hybrid.decryptWithPublicKey( Base64.decode( resStr ) ), "UTF-8" ) ) );
     }
 
     private void doOneTest( String resStr )
