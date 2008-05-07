@@ -16,6 +16,7 @@ import java.security.cert.Certificate;
 import sun.misc.BASE64Encoder;
 
 public class ExportPrivateKey {
+    
     private File keystoreFile;
     private String keyStoreType;
     private char[] password;

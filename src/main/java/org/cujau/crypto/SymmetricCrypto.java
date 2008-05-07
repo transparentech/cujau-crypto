@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 public class SymmetricCrypto {
 
     private static final Logger LOG = LoggerFactory.getLogger( SymmetricCrypto.class );
+    
     static final String ALGORITHM_NAME = "AES";
     static final String CIPHER_ALGORITHM_NAME = "AES/CBC/PKCS5Padding";
     static final int ALGORITHM_BITS = 128;
