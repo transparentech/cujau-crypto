@@ -97,6 +97,14 @@ public class HybridCryptoTest {
         assertTrue( str.equals( new String( hybrid.decryptWithPublicKey( Base64.decode( resStr ) ), "UTF-8" ) ) );
     }
 
+    @Test
+    public void testHybridTxtDecrypt()
+            throws IOException, CryptoException {
+        String encTxt = ResourceUtil.getResourceAsString( "/test.txt" );
+        String txt = new String( hybrid.decryptWithPublicKey( Base64.decode( encTxt ) ), "UTF-8" );
+        LOG.debug( "txt={}", txt );
+    }
+
     private void doOneTest( String resStr )
             throws UnsupportedEncodingException, CryptoException {
         byte[] data = resStr.getBytes( "UTF-8" );
