@@ -84,6 +84,7 @@ jgEdR8+yjmAFE3AbIg1cfjhF+QJTYUOTsqAG77JyRA=='
 com.sme.license.owner=Nicholas Rahn
 com.sme.license.expirationDate=2010-01-01 00:00:00
 com.sme.license.type=GOLD
+com.sme.license.versions.regex=.*
 }
       encStr = @sim.encrypt_with_private_key( licStr )
       puts "license='#{Base64.encode64( encStr )}'"
