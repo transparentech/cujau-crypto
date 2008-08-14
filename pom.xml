@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.cujau</groupId>
-    <artifactId>cujau.crypto</artifactId>
+    <artifactId>cujau-crypto</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 
     <name>CUJAU-CRYPTO</name>
