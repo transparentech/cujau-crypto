@@ -222,7 +222,7 @@ public class AsymmetricCrypto {
         return pubKey;
     }
 
-    private static KeyStore getKeyStore( InputStream keystoreStream, String keystorePassword ) {
+    public static KeyStore getKeyStore( InputStream keystoreStream, String keystorePassword ) {
         DataInputStream is = new DataInputStream( keystoreStream );
         try {
             KeyStore keystore = KeyStore.getInstance( "jks" );
