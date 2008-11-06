@@ -5,7 +5,7 @@
 
     <groupId>org.cujau</groupId>
     <artifactId>cujau-crypto</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 
     <name>CUJAU-CRYPTO</name>
     <url>http://www.transparentech.com/projects/cujau</url>
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>org.cujau</groupId>
             <artifactId>cujau</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
