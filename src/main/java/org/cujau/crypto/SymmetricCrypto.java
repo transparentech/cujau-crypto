@@ -17,10 +17,18 @@ import javax.crypto.spec.SecretKeySpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Symmetric (secret or private key) encryption.
+ * 
+ * "A secret key, which can be a number, a word, or just a string of random letters, is applied to
+ * the text of a message to change the content in a particular way. This might be as simple as
+ * shifting each letter by a number of places in the alphabet. As long as both sender and recipient
+ * know the secret key, they can encrypt and decrypt all messages that use this key."
+ */
 public class SymmetricCrypto {
 
     private static final Logger LOG = LoggerFactory.getLogger( SymmetricCrypto.class );
-    
+
     static final String ALGORITHM_NAME = "AES";
     static final String CIPHER_ALGORITHM_NAME = "AES/CBC/PKCS5Padding";
     static final int ALGORITHM_BITS = 128;
@@ -28,9 +36,10 @@ public class SymmetricCrypto {
     private final KeyGenerator keyGen;
     private final SecureRandom secureRandom;
 
-    public SymmetricCrypto() throws CryptoException {
+    public SymmetricCrypto()
+            throws CryptoException {
         keyGen = loadKeyGenerator( ALGORITHM_NAME, ALGORITHM_BITS );
-        
+
         try {
             secureRandom = SecureRandom.getInstance( "SHA1PRNG" );
         } catch ( NoSuchAlgorithmException e ) {
@@ -69,6 +78,18 @@ public class SymmetricCrypto {
         return new IvParameterSpec( iv );
     }
 
+    /**
+     * Create a cipher using the default algorithm: AES/CBC/PKCS5Padding
+     * 
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     */
+    public Cipher createCipher()
+            throws NoSuchAlgorithmException, NoSuchPaddingException {
+        return Cipher.getInstance( CIPHER_ALGORITHM_NAME );
+    }
+
     public byte[] encrypt( byte[] data, SecretKey key, IvParameterSpec iv )
             throws CryptoException {
         return crypt( data, key, iv, Cipher.ENCRYPT_MODE );
@@ -84,7 +105,7 @@ public class SymmetricCrypto {
         byte[] result = null;
 
         try {
-            Cipher aesCipher = Cipher.getInstance( CIPHER_ALGORITHM_NAME );
+            Cipher aesCipher = createCipher();
 
             /*
              * Step 3. Initialize the Cipher for Encryption

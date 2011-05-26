@@ -11,7 +11,7 @@
     
     <groupId>org.cujau</groupId>
     <artifactId>cujau-crypto</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.10-SNAPSHOT</version>
 
     <name>CUJAU-CRYPTO</name>
     <url>http://www.transparentech.com/projects/cujau</url>

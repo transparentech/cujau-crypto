@@ -22,6 +22,10 @@ import javax.crypto.NoSuchPaddingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Asymmetric (public key) encryption.
+ * 
+ */
 public class AsymmetricCrypto {
 
     private static final Logger LOG = LoggerFactory.getLogger( AsymmetricCrypto.class );
