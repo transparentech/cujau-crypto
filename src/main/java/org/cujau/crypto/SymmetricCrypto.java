@@ -4,6 +4,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -11,7 +12,10 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.interfaces.PBEKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.slf4j.Logger;
@@ -79,15 +83,56 @@ public class SymmetricCrypto {
     }
 
     /**
+     * Create a byte[16] array filled with random bytes.
+     * 
+     * @return An array of 16 random bytes.
+     */
+    public byte[] getRandomSalt() {
+        byte[] salt = new byte[16];
+        secureRandom.nextBytes( salt );
+        return salt;
+    }
+
+    public SecretKey getKeyFromPasswordAndSalt( String pwd, byte[] salt )
+            throws CryptoException {
+        try {
+            PBEKeySpec password = new PBEKeySpec( pwd.toCharArray(), salt, 1000, 128 );
+            SecretKeyFactory factory;
+            factory = SecretKeyFactory.getInstance( "PBKDF2WithHmacSHA1" );
+            PBEKey key = (PBEKey) factory.generateSecret( password );
+            SecretKey encKey = new SecretKeySpec( key.getEncoded(), "AES" );
+            return encKey;
+        } catch ( NoSuchAlgorithmException e ) {
+            throw new CryptoException( e );
+        } catch ( InvalidKeySpecException e ) {
+            throw new CryptoException( e );
+        }
+    }
+
+    /**
      * Create a cipher using the default algorithm: AES/CBC/PKCS5Padding
      * 
+     * @param encryptMode
+     * @param key
+     * @param iv
      * @return
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchPaddingException
+     * @throws CryptoException
      */
-    public Cipher createCipher()
-            throws NoSuchAlgorithmException, NoSuchPaddingException {
-        return Cipher.getInstance( CIPHER_ALGORITHM_NAME );
+    public Cipher createAndInitCipher( int encryptMode, SecretKey key, IvParameterSpec iv )
+            throws CryptoException {
+        try {
+            Cipher cipher = Cipher.getInstance( CIPHER_ALGORITHM_NAME );
+            cipher.init( encryptMode, key, iv );
+            return cipher;
+        } catch ( NoSuchAlgorithmException e ) {
+            throw new CryptoException( e );
+        } catch ( NoSuchPaddingException e ) {
+            throw new CryptoException( e );
+        } catch ( InvalidKeyException e ) {
+            throw new CryptoException( e );
+        } catch ( InvalidAlgorithmParameterException e ) {
+            throw new CryptoException( e );
+        }
     }
 
     public byte[] encrypt( byte[] data, SecretKey key, IvParameterSpec iv )
@@ -105,26 +150,12 @@ public class SymmetricCrypto {
         byte[] result = null;
 
         try {
-            Cipher aesCipher = createCipher();
-
-            /*
-             * Step 3. Initialize the Cipher for Encryption
-             */
-            aesCipher.init( mode, key, iv );
-
+            Cipher aesCipher = createAndInitCipher( mode, key, iv );
             /**
              * Step 4. Encrypt the Data 1. Declare / Initialize the Data. Here the data is of type
              * String 2. Convert the Input Text to Bytes 3. Encrypt the bytes using doFinal method
              */
             result = aesCipher.doFinal( data );
-        } catch ( NoSuchAlgorithmException e ) {
-            throw new CryptoException( e );
-        } catch ( NoSuchPaddingException e ) {
-            throw new CryptoException( e );
-        } catch ( InvalidKeyException e ) {
-            throw new CryptoException( e );
-        } catch ( InvalidAlgorithmParameterException e ) {
-            throw new CryptoException( e );
         } catch ( IllegalBlockSizeException e ) {
             throw new CryptoException( e );
         } catch ( BadPaddingException e ) {
