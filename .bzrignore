@@ -1,3 +1,5 @@
 target
 derby.log
 .~*
+src/main/gem/pkg
+src/main/gem/.git
