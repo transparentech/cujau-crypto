@@ -1,7 +1,7 @@
 require 'openssl'
 require 'digest/sha1'
 
-module Crypto
+module CujauCrypto
   class Symmetric
 
     @@DEFAULT_ALGORITHM_NAME = "aes-128-cbc"

@@ -1,11 +1,11 @@
 #require 'crypto/asymmetric'
 #require 'crypto/symmetric'
 
-module Crypto
+module CujauCrypto
   class Hybrid
     def initialize( asym )
       @asymmetric = asym
-      @symmetric = Crypto::Symmetric.new()
+      @symmetric = CujauCrypto::Symmetric.new()
     end
     
     def encrypt_with_private_key( data )

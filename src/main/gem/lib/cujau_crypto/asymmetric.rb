@@ -1,7 +1,7 @@
 require 'openssl'
 require 'digest/sha1'
 
-module Crypto
+module CujauCrypto
   class Asymmetric
     attr_reader :key_size_bytes
     
