@@ -13,7 +13,7 @@ import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 
-import sun.misc.BASE64Encoder;
+import org.cujau.utils.Base64;
 
 public class ExportPrivateKey {
     
@@ -41,11 +41,10 @@ public class ExportPrivateKey {
     public void export()
             throws Exception {
         KeyStore keystore = KeyStore.getInstance( keyStoreType );
-        BASE64Encoder encoder = new BASE64Encoder();
         keystore.load( new FileInputStream( keystoreFile ), password );
         KeyPair keyPair = getPrivateKey( keystore, alias, password );
         PrivateKey privateKey = keyPair.getPrivate();
-        String encoded = encoder.encode( privateKey.getEncoded() );
+        String encoded = Base64.encodeBytes( privateKey.getEncoded() );
         FileWriter fw = new FileWriter( exportedFile );
         fw.write( "-----BEGIN PRIVATE KEY-----\n" );
         fw.write( encoded );
