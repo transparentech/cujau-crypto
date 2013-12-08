@@ -5,7 +5,7 @@
 
     <groupId>org.cujau</groupId>
     <artifactId>cujau-crypto</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
 
     <name>CUJAU-CRYPTO</name>
     <description>Common Utilities for Java Appliation Use - Database Framework</description>
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.cujau</groupId>
             <artifactId>cujau</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
+            <version>[1.1.0,)</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.12</version>
+            <version>1.0.13</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
