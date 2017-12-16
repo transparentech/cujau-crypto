@@ -227,9 +227,13 @@ public class AsymmetricCrypto {
     }
 
     public static KeyStore getKeyStore( InputStream keystoreStream, String keystorePassword ) {
+        return getKeyStore("jks", keystoreStream, keystorePassword);
+    }
+
+    public static KeyStore getKeyStore( String keystoreType, InputStream keystoreStream, String keystorePassword ) {
         DataInputStream is = new DataInputStream( keystoreStream );
         try {
-            KeyStore keystore = KeyStore.getInstance( "jks" );
+            KeyStore keystore = KeyStore.getInstance( keystoreType );
             keystore.load( is, keystorePassword.toCharArray() );
             return keystore;
         } catch ( KeyStoreException e ) {
