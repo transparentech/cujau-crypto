@@ -5,7 +5,7 @@
 
     <groupId>org.cujau</groupId>
     <artifactId>cujau-crypto</artifactId>
-    <version>1.1.4</version>
+    <version>1.2.0-SNAPSHOT</version>
 
     <name>CUJAU-CRYPTO</name>
     <description>Common Utilities for Java Appliation Use - Database Framework</description>
@@ -59,8 +59,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>11</source>
+                    <target>11</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
